@@ -1,0 +1,2 @@
+Aqui será salvo o arquivo gerado pelo o comando:
+docker cp airflow-airflow-worker-1:/tmp/venda_produtos.csv ..\leituraDevolvida\venda_produtos.csv

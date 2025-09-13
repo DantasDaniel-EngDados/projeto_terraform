@@ -1,4 +1,4 @@
-Projeto de estudo onde o terraform inicia o banco de dados 
+Projeto de estudo onde o terraform inicia o banco de dados postgres e roda o airflow para executar as DAGs que alimentam os bancos de dados com as informações passadas pelo CSV. Logo após alimenta-los a DAG calcula_vendas_por_produtos cria um novo arquivo .csv fazendo GROUP BY entre os valores para trazer o resultado entre quantidade de vendas e valores totais recebidos, dentro do container para ser exportado para a pasta leituraDevolvida.
 
 Usando venv:
     .\.venv\Scripts\Activate.ps1
@@ -6,7 +6,7 @@ Usando venv:
 Versão Python:
     Python version 3.10.0
 
-Comandos para usar no venv: #OBS: Pode faltar algum comando dependendo da máquina, mas tentei se o mais completo possível.
+Comandos para usar no venv: #OBS: Pode faltar algum comando ou ter mais que o necessário dependendo da máquina, mas tentei se o mais completo possível.
     pip install apache-airflow==2.10.0
     pip install -r requirements.txt  #lembrar de criar o requirements.txt com as bibliotecas nessesárias
     pip install --upgrade pip setuptools wheel

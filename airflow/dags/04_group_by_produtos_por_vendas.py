@@ -35,7 +35,7 @@ default_args = {
 }
 
 with DAG(
-    dag_id='group_by_vendas_produtos',
+    dag_id='calcula_vendas_por_produtos',
     default_args=default_args,
     schedule='@daily',
     catchup=False,
