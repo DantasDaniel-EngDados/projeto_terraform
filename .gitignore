@@ -1,0 +1,15 @@
+/projeto/terraform.tfvars
+/data
+/projeto/terraform.tfstate
+/projeto/.terraform.lock.hcl
+/projeto/.terraform
+/projeto/terraform.tfstate.backup
+/projeto/variables.tf
+/projeto/.terraform.tfstate.lock.info
+/airflow/.env
+/airflow/logs
+/airflow/dags/configPy.py
+/airflow/dags/__pycache__
+/airflow/config
+/.venv
+/requirements.txt
