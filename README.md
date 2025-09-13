@@ -26,3 +26,5 @@ docker-compose up airflow-init
 docker-compose up -d
 
 docker exec -it postgres_local psql -U postgres -d postgres
+
+    docker cp airflow-airflow-worker-1:/tmp/venda_produtos.csv ..\leituraDevolvida\venda_produtos.csv

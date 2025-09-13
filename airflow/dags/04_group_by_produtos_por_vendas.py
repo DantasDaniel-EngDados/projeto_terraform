@@ -22,7 +22,7 @@ def salvar_resultado():
     '''
     resultados = hook.get_records(sql)
     colnames = ['nomeproduto', 'quantidade_total', 'valor_total_venda']
-    caminho_arquivo = '/opt/airflow/leituraDevolvida/venda_produtos.csv'
+    caminho_arquivo = '/tmp/venda_produtos.csv'
     with open(caminho_arquivo, 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerow(colnames)
@@ -30,7 +30,7 @@ def salvar_resultado():
 
 default_args = {
     'owner': 'airflow',
-    'start_date': datetime(2025, 9, 13),
+    'start_date': datetime(2025, 9, 12),
     'retries': 1
 }
 
