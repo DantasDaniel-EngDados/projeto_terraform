@@ -5,21 +5,11 @@ from datetime import datetime
 import csv
 
 def salvar_resultado():
+    caminho_sql = '/opt/sql/group_by.sql'  # Caminho absoluto dentro do container
+    with open(caminho_sql, 'r', encoding='utf-8') as arquivo_sql:
+        sql = arquivo_sql.read()
+    
     hook = PostgresHook(postgres_conn_id='postgres_default')
-    sql = '''
-        SELECT 
-            v.nomeproduto,
-            SUM(v.quantidade) AS quantidade_total,
-            SUM(v.quantidade * p.preco) AS valor_total_venda
-        FROM 
-            vendas v
-        JOIN 
-            produtos p ON v.nomeproduto = p.nomeproduto
-        GROUP BY 
-            v.nomeproduto
-        ORDER BY 
-            valor_total_venda DESC;
-    '''
     resultados = hook.get_records(sql)
     colnames = ['nomeproduto', 'quantidade_total', 'valor_total_venda']
     caminho_arquivo = '/tmp/venda_produtos.csv'
@@ -27,6 +17,7 @@ def salvar_resultado():
         writer = csv.writer(f)
         writer.writerow(colnames)
         writer.writerows(resultados)
+
 
 default_args = {
     'owner': 'airflow',
