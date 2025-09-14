@@ -74,5 +74,7 @@ arquivos a serem criados:
         }
 
 Caso seja preciso estabelecer conexão do airflow com o banco de dados postgres criado pelo terraform:
-    conn_id: tente usar o => postgres_default
-    #Não encontrei comandos para verificar isso via CMD que funcionaram
+    No UI do airflow:
+        Admin -> Connections:
+            conn_id: tente usar o => postgres_default
+            #Não encontrei comandos para verificar isso via CMD que funcionaram
