@@ -11,7 +11,7 @@ Versão Python:
 
 Comandos para usar no venv: #OBS: Pode faltar algum comando ou ter mais que o necessário dependendo da máquina, mas tentei se o mais completo possível.
     pip install apache-airflow==2.10.0
-    pip install -r requirements.txt  #lembrar de criar o requirements.txt com as bibliotecas nessesárias
+    pip install -r requirements.txt  #lembrar de criar o requirements.txt com as bibliotecas necessárias
     pip install --upgrade pip setuptools wheel
     pip install apache-airflow apache-airflow-providers-postgres
 
@@ -33,13 +33,13 @@ Para iniciar o airflow, na pasta airflow rodar os comandos via power shell do ve
     docker-compose up airflow-init
     docker-compose up -d
 
-Para verificar 
+Para verificar banco de dados
     docker exec -it postgres_local psql -U "Nome_do_usuario" -d "Nome_do_banco_de_dados"
 
-Para copiar o .csv criado no container para dentro do leituraDevolvida:
+Para copiar o .csv criado no container para dentro da pasta leituraDevolvida:
     docker cp airflow-airflow-worker-1:/tmp/venda_produtos.csv ..\leituraDevolvida\venda_produtos.csv
 
-arquivos a serem criados:
+Arquivos a serem criados: #Preencher conforme estabeleceu as informações
     /terraform/terraform.tfvars
         postgres_password = ""
         postgres_user     = ""
@@ -76,7 +76,7 @@ arquivos a serem criados:
         default = "postgres"
         }
 
-    /airlfow/.env:
+    /airflow/.env: #Preencher conforme estabeleceu as informações
         POSTGRES_HOST=
         POSTGRES_PORT=
         POSTGRES_USER=
@@ -91,7 +91,7 @@ arquivos a serem criados:
         AIRFLOW_ADMIN_PASSWORD=
         AIRFLOW__WEBSERVER__SECRET_KEY=
     
-    /airflow/dags/configPy.py:
+    /airflow/dags/configPy.py: #Preencher conforme estabeleceu as informações
         dbname=
         user=
         password=
@@ -103,3 +103,5 @@ Caso seja preciso estabelecer conexão do airflow com o banco de dados postgres 
         Admin -> Connections:
             conn_id: tente usar o => postgres_default
             #Não encontrei comandos para verificar isso via CMD que funcionaram
+
+OBS: Indico sempre verificar as informações, comandos e links aqui escritos.
