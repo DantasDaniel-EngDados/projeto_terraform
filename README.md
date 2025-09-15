@@ -1,4 +1,4 @@
-Projeto de estudo onde o terraform inicia o banco de dados postgres, após isso roda-se o airflow para executar as DAGs que alimentam os bancos de dados (produtos, vendas) com as informações passadas pelo JSON (Antes era feito para ler um arquivo CSV). Logo após alimenta-los a DAG calcula_vendas_por_produtos cria um novo arquivo CSV fazendo GROUP BY entre os valores para trazer o resultado entre quantidade de vendas e valores totais recebidos, dentro do container para ser exportado para a pasta leituraDevolvida.
+Projeto de estudo onde o terraform inicia o banco de dados postgres, após isso roda-se o airflow para executar as DAGs que alimentam os bancos de dados (produtos, vendas) com as informações passadas pelo JSON (Antes eram feitos para ler um arquivo CSV). Logo após alimenta-los a DAG calcula_vendas_por_produtos cria um novo arquivo CSV fazendo GROUP BY entre os valores para trazer o resultado entre quantidade de vendas e valores totais recebidos, dentro do container para ser exportado para a pasta leituraDevolvida.
 
 Sistema Operacional:
     Windows
