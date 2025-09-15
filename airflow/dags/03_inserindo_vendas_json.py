@@ -4,13 +4,14 @@ from airflow.decorators import task
 from datetime import datetime, timedelta
 import pandas as pd
 import psycopg2
+import json
 
 import configPy
 
 DATA_PATH = "/opt/airflow/leituras"
-FILE_NAME = "produtos_adicionados.csv"
+FILE_NAME = "vendas_adicionadas.json"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SQL_FILE_PATH = os.path.abspath(os.path.join(BASE_DIR, "../../sql/inserindo_produtos_csv.sql"))
+SQL_FILE_PATH = os.path.abspath(os.path.join(BASE_DIR, "../../sql/inserindo_vendas_csv.sql"))
 
 default_args = {
     "owner": "você",
@@ -19,9 +20,9 @@ default_args = {
 }
 
 with DAG(
-    "inserindo_produtos_csv",
+    "inserindo_vendas_json",
     default_args=default_args,
-    description="Insere dados informados no banco de dados",
+    description="Insere dados informados no arquivo JSON no banco de dados",
     schedule="@daily",
     start_date=datetime(2025, 8, 20),
     catchup=False
@@ -38,9 +39,13 @@ with DAG(
 
     @task
     def extrair_transformar(file_path):
-        print(f"Lendo arquivo: {file_path}")
-        df = pd.read_csv(file_path)
-        return df.to_dict(orient="records")
+        print(f"Lendo arquivo JSON: {file_path}")
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        # Converte datas para objeto date
+        for item in data:
+            item["datavenda"] = pd.to_datetime(item["datavenda"]).date()
+        return data
 
     @task
     def carregar(dados):
@@ -55,7 +60,7 @@ with DAG(
         )
         cursor = conn.cursor()
         for row in dados:
-            cursor.execute(insert_query, (row["nomeproduto"], row["categoria"], row["preco"]))
+            cursor.execute(insert_query, (row["nomeproduto"], row["quantidade"], row["datavenda"]))
         conn.commit()
         cursor.close()
         conn.close()
