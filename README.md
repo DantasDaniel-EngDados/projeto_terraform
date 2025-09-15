@@ -15,7 +15,7 @@ Comandos para usar no venv: #OBS: Pode faltar algum comando ou ter mais que o ne
     pip install --upgrade pip setuptools wheel
     pip install apache-airflow apache-airflow-providers-postgres
 
-    No Power Shell:
+    No Powershell:
         $env:AIRFLOW_VERSION="2.10.0"
         $env:PYTHON_VERSION="3.10.0"
         $env:CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-$($env:AIRFLOW_VERSION)/constraints-$($env:PYTHON_VERSION).txt"
@@ -23,12 +23,12 @@ Comandos para usar no venv: #OBS: Pode faltar algum comando ou ter mais que o ne
         pip install apache-airflow==$env:AIRFLOW_VERSION --constraint $env:CONSTRAINT_URL
         pip install apache-airflow-providers-postgres --constraint $env:CONSTRAINT_URL
 
-Para iniciar o terraform, na pasta terraform rodar os comandos via power shell do venv:
+Para iniciar o terraform, na pasta terraform rodar os comandos via powershell do venv:
     terraform init
     terraform apply
     terraform destroy
 
-Para iniciar o airflow, na pasta airflow rodar os comandos via power shell do venv:
+Para iniciar o airflow, na pasta airflow rodar os comandos via powershell do venv:
     docker-compose build --no-cache
     docker-compose up airflow-init
     docker-compose up -d
