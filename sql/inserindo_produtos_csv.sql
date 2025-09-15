@@ -1,0 +1,1 @@
+INSERT INTO produtos (nomeproduto, categoria, preco) VALUES (%s, %s, %s)

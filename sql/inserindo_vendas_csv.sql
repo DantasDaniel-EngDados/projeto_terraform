@@ -1,0 +1,1 @@
+INSERT INTO vendas (nomeproduto, quantidade, datavenda) VALUES (%s, %s, %s)

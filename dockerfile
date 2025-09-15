@@ -15,6 +15,8 @@ RUN mkdir -p /opt/airflow/leituras && \
     COPY ./leituras/vendas_adicionadas.csv /opt/airflow/leituras
     COPY ./sql/init.sql /opt/sql
     COPY ./sql/group_by.sql /opt/sql
+    COPY ./sql/inserindo_produtos_csv.sql /opt/sql
+    COPY ./sql/inserindo_vendas_csv.sql /opt/sql
 
 
 USER airflow
