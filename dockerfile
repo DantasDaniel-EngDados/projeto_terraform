@@ -10,7 +10,7 @@ RUN mkdir -p /opt/airflow/leituras && \
     apt-get update && \
     apt-get install -y redis-tools && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
-
+    
     COPY ./leituras/produtos_adicionados.json /opt/airflow/leituras
     COPY ./leituras/vendas_adicionadas.json /opt/airflow/leituras
     COPY ./sql/init.sql /opt/sql
@@ -20,3 +20,5 @@ RUN mkdir -p /opt/airflow/leituras && \
 
 
 USER airflow
+
+RUN pip install matplotlib pandas

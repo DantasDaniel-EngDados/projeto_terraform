@@ -1,4 +1,4 @@
-Projeto de estudo onde o terraform inicia o banco de dados postgres, após isso roda-se o airflow para executar as DAGs que alimentam os bancos de dados (produtos, vendas) com as informações passadas pelo JSON (Antes eram feitos para ler um arquivo CSV). Logo após alimenta-los a DAG calcula_vendas_por_produtos cria um novo arquivo CSV fazendo GROUP BY entre os valores para trazer o resultado entre quantidade de vendas e valores totais recebidos, dentro do container para ser exportado para a pasta leituraDevolvida.
+Projeto de estudo onde o terraform inicia o banco de dados Postgres, após isso roda-se o airflow para executar as DAGs que alimentam os bancos de dados (produtos, vendas) com as informações passadas pelo JSON (Antes eram feitas para ler um arquivo CSV). Logo após alimenta-los a DAG calcula_vendas_por_produtos cria um novo arquivo CSV fazendo GROUP BY entre os valores para trazer o resultado entre quantidade de vendas e valores totais recebidos, também é possível rodar a DAG quatidade_vendida_por_produto que gera um PDF de um gráfico mostrando o valor total vendido de cada produto, ambos são enviados para dentro do container onde podem ser exportados para a pasta leituraDevolvida.
 
 Sistema Operacional:
     Windows
@@ -36,8 +36,9 @@ Para iniciar o airflow, na pasta airflow rodar os comandos via powershell do ven
 Para verificar banco de dados
     docker exec -it postgres_local psql -U "Nome_do_usuario" -d "Nome_do_banco_de_dados"
 
-Para copiar o .csv criado no container para dentro da pasta leituraDevolvida:
+Para copiar o .csv e o .pdf criado no container para dentro da pasta leituraDevolvida:
     docker cp airflow-airflow-worker-1:/tmp/venda_produtos.csv ..\leituraDevolvida\venda_produtos.csv
+    docker cp airflow-airflow-worker-1:/tmp/produto_valor_total.pdf ..\leituraDevolvida\produto_valor_total.pdf
 
 Arquivos a serem criados: #Preencher conforme estabeleceu as informações
     /terraform/terraform.tfvars
