@@ -26,6 +26,8 @@ Comandos para usar no venv: #OBS: Pode faltar algum comando ou ter mais que o ne
 Para iniciar o terraform, na pasta terraform rodar os comandos via powershell do venv:
     terraform init
     terraform apply
+
+Para destruir o terraform criado:
     terraform destroy
 
 Para iniciar o airflow, na pasta airflow rodar os comandos via powershell do venv:

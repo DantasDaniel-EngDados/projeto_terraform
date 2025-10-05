@@ -10,8 +10,10 @@ terraform {
 provider "docker" {}
 
 resource "docker_image" "postgres" {
-  name = "postgres:latest"
+  name = "postgres:alpine"
 }
+
+resource "docker_volume" "pgdata" {}
 
 resource "docker_container" "postgres" {
   image = docker_image.postgres.image_id
@@ -27,7 +29,7 @@ resource "docker_container" "postgres" {
   ]
   volumes {
     container_path = "/var/lib/postgresql/data"
-    host_path      = abspath("${path.module}/../data")
+    volume_name    = docker_volume.pgdata.name
   }
   restart = "unless-stopped"
 }
