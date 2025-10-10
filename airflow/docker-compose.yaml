@@ -22,6 +22,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
     - ../sql:/opt/airflow/sql
+    - ../leituras:/mnt/leituras
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -70,6 +71,7 @@ services:
       - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
       - ../sql:/opt/airflow/sql
       - ./init_airflow.sh:/init_airflow.sh
+      - ../leituras:/mnt/leituras
 
   webserver:
     <<: *airflow-common
@@ -77,6 +79,7 @@ services:
       context: ..
       dockerfile: Dockerfile
     image: custom-airflow:latest
+    user: "50000:50000"
     environment:
       <<: *airflow-common-env
       AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
@@ -88,6 +91,8 @@ services:
       - airflow-scheduler
       - airflow-worker
       - airflow-apiserver
+    volumes:
+      - ../leituras:/mnt/leituras
 
   airflow-scheduler:
     <<: *airflow-common
@@ -125,6 +130,7 @@ services:
       - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
       - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
       - ../sql:/opt/airflow/sql
+      - ../leituras:/mnt/leituras
 
   airflow-apiserver:
     <<: *airflow-common

@@ -1,4 +1,5 @@
 import os
+import shutil
 from airflow import DAG
 from airflow.decorators import task
 from datetime import datetime, timedelta
@@ -8,10 +9,10 @@ import json
 
 import configPy
 
-DATA_PATH = "/opt/airflow/leituras"
-FILE_NAME = "vendas_adicionadas.json"
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SQL_FILE_PATH = os.path.abspath(os.path.join(BASE_DIR, "../../sql/inserindo_vendas_csv.sql"))
+LOCAL_MOUNTED_PATH = "/mnt/leituras"
+DATA_PATH = "/tmp"
+PROCESSED_FILE = "/tmp/processed_files_vendas.txt"
+SQL_FILE_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../sql/inserindo_vendas_csv.sql"))
 
 default_args = {
     "owner": "você",
@@ -22,27 +23,45 @@ default_args = {
 with DAG(
     "inserindo_vendas_json",
     default_args=default_args,
-    description="Insere dados informados no arquivo JSON no banco de dados",
+    description="Processa arquivos JSON de vendas não processados e insere no banco",
     schedule="@daily",
     start_date=datetime(2025, 8, 20),
-    catchup=False
+    catchup=False,
+    max_active_runs=1,
 ) as dag:
 
     @task
-    def verificar_arquivo():
-        file_path = os.path.join(DATA_PATH, FILE_NAME)
-        if os.path.isfile(file_path):
-            print(f"Arquivo encontrado: {file_path}")
-            return file_path
-        else:
-            raise FileNotFoundError(f"Arquivo {file_path} não encontrado")
+    def criar_arquivo_controle():
+        if not os.path.exists(PROCESSED_FILE):
+            with open(PROCESSED_FILE, "w") as f:
+                f.write("")
+
+    @task
+    def copiar_arquivos_para_tmp():
+        if not os.path.exists(DATA_PATH):
+            os.makedirs(DATA_PATH)
+        arquivos = []
+        for fname in os.listdir(LOCAL_MOUNTED_PATH):
+            if fname.startswith("vendas") and fname.endswith(".json"):
+                src = os.path.join(LOCAL_MOUNTED_PATH, fname)
+                dst = os.path.join(DATA_PATH, fname)
+                shutil.copy2(src, dst)
+                arquivos.append(dst)
+        return arquivos
+
+    @task
+    def listar_novos_arquivos(copied_files):
+        processed = set()
+        if os.path.isfile(PROCESSED_FILE):
+            with open(PROCESSED_FILE, "r") as f:
+                processed = set(line.strip() for line in f if line.strip())
+        novos = [f for f in copied_files if f not in processed]
+        return novos
 
     @task
     def extrair_transformar(file_path):
-        print(f"Lendo arquivo JSON: {file_path}")
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-        # Converte datas para objeto date
         for item in data:
             item["datavenda"] = pd.to_datetime(item["datavenda"]).date()
         return data
@@ -56,7 +75,7 @@ with DAG(
             user=configPy.user,
             password=configPy.password,
             host=configPy.host,
-            port=configPy.port 
+            port=configPy.port
         )
         cursor = conn.cursor()
         for row in dados:
@@ -65,6 +84,17 @@ with DAG(
         cursor.close()
         conn.close()
 
-    arquivo = verificar_arquivo()
-    dados_diarios = extrair_transformar(arquivo)
-    carregar(dados_diarios)
+    @task
+    def marcar_como_processado(file_path):
+        with open(PROCESSED_FILE, "a") as f:
+            f.write(f"{file_path}\n")
+
+    criar_arquivo_controle_task = criar_arquivo_controle()
+    arquivos_copiados = copiar_arquivos_para_tmp()
+    arquivos_novos = listar_novos_arquivos(arquivos_copiados)
+    arquivos_novos.set_upstream([criar_arquivo_controle_task, arquivos_copiados])
+
+    dados = extrair_transformar.expand(file_path=arquivos_novos)
+    dados.set_upstream(arquivos_novos)
+    carregar.expand(dados=dados)
+    marcar_como_processado.expand(file_path=arquivos_novos)

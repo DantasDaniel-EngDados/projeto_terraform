@@ -1,0 +1,2 @@
+Após adicionar os arquivos contidos na pasta leituras colar esses arquivos na pasta para ver se lê corretamente e não duplica as informações.
+Arquivo para teste.

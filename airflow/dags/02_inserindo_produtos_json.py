@@ -7,10 +7,9 @@ import json
 
 import configPy
 
-DATA_PATH = "/opt/airflow/leituras"
-FILE_NAME = "produtos_adicionados.json"
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SQL_FILE_PATH = os.path.abspath(os.path.join(BASE_DIR, "../../sql/inserindo_produtos_csv.sql"))
+DATA_PATH = "/mnt/leituras"
+PROCESSED_FILE = "/tmp/processed_files_produtos.txt"
+SQL_FILE_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../sql/inserindo_produtos_csv.sql"))
 
 default_args = {
     "owner": "você",
@@ -21,24 +20,33 @@ default_args = {
 with DAG(
     "inserindo_produtos_json",
     default_args=default_args,
-    description="Insere dados informados do arquivo JSON no banco de dados",
+    description="Processa arquivos JSON de produtos não processados e insere no banco",
     schedule="@daily",
     start_date=datetime(2025, 8, 20),
-    catchup=False
+    catchup=False,
+    max_active_runs=1,
 ) as dag:
 
     @task
-    def verificar_arquivo():
-        file_path = os.path.join(DATA_PATH, FILE_NAME)
-        if os.path.isfile(file_path):
-            print(f"Arquivo encontrado: {file_path}")
-            return file_path
-        else:
-            raise FileNotFoundError(f"Arquivo {file_path} não encontrado")
+    def criar_arquivo_controle():
+        if not os.path.exists(PROCESSED_FILE):
+            with open(PROCESSED_FILE, "w") as f:
+                f.write("")
+
+    @task
+    def listar_novos_arquivos():
+        all_files = [os.path.join(DATA_PATH, fname)
+                     for fname in os.listdir(DATA_PATH)
+                     if fname.startswith("produtos") and fname.endswith(".json")]
+        processed = set()
+        if os.path.isfile(PROCESSED_FILE):
+            with open(PROCESSED_FILE, "r") as f:
+                processed = set(line.strip() for line in f if line.strip())
+        novos = [f for f in all_files if f not in processed]
+        return novos
 
     @task
     def extrair_transformar(file_path):
-        print(f"Lendo arquivo JSON: {file_path}")
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
         return data
@@ -61,6 +69,17 @@ with DAG(
         cursor.close()
         conn.close()
 
-    arquivo = verificar_arquivo()
-    dados_diarios = extrair_transformar(arquivo)
-    carregar(dados_diarios)
+    @task
+    def marcar_como_processado(file_path):
+        with open(PROCESSED_FILE, "a") as f:
+            f.write(f"{file_path}\n")
+
+    criar_arquivo_controle_task = criar_arquivo_controle()
+    arquivos_novos = listar_novos_arquivos()
+    arquivos_novos.set_upstream(criar_arquivo_controle_task)
+
+    # Dynamic task mapping
+    dados = extrair_transformar.expand(file_path=arquivos_novos)
+    dados.set_upstream(arquivos_novos)
+    carregar.expand(dados=dados)
+    marcar_como_processado.expand(file_path=arquivos_novos)

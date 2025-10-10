@@ -1,0 +1,19 @@
+[
+  {"nomeproduto": "Teclado Mecânico", "categoria": "Periféricos", "preco": 300.00},
+  {"nomeproduto": "Mouse Gamer", "categoria": "Periféricos", "preco": 150.00},
+  {"nomeproduto": "Monitor LCD 24''", "categoria": "Monitores", "preco": 750.00},
+  {"nomeproduto": "SSD 1TB", "categoria": "Armazenamento", "preco": 550.00},
+  {"nomeproduto": "HD Externo 2TB", "categoria": "Armazenamento", "preco": 400.00},
+  {"nomeproduto": "Placa de Vídeo RTX 3060", "categoria": "Placas de Vídeo", "preco": 2200.00},
+  {"nomeproduto": "Processador Intel i7", "categoria": "Processadores", "preco": 1450.00},
+  {"nomeproduto": "Memória RAM 16GB DDR4", "categoria": "Memória", "preco": 320.00},
+  {"nomeproduto": "Fonte 600W", "categoria": "Fontes", "preco": 280.00},
+  {"nomeproduto": "Gabinete Mid Tower", "categoria": "Gabinetes", "preco": 350.00},
+  {"nomeproduto": "Headset Gamer", "categoria": "Periféricos", "preco": 190.00},
+  {"nomeproduto": "Webcam HD", "categoria": "Periféricos", "preco": 130.00},
+  {"nomeproduto": "Placa Mãe ATX", "categoria": "Placas Mãe", "preco": 900.00},
+  {"nomeproduto": "Cooler para CPU", "categoria": "Refrigeração", "preco": 150.00},
+  {"nomeproduto": "Cabo HDMI 2 metros", "categoria": "Acessórios", "preco": 50.00},
+  {"nomeproduto": "Estabilizador de Energia", "categoria": "Acessórios", "preco": 220.00},
+  {"nomeproduto": "Leitor de Cartão SD", "categoria": "Acessórios", "preco": 75.00}
+]
