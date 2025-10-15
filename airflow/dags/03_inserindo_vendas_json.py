@@ -1,5 +1,4 @@
 import os
-import shutil
 from airflow import DAG
 from airflow.decorators import task
 from datetime import datetime, timedelta
@@ -11,7 +10,7 @@ import configPy
 
 LOCAL_MOUNTED_PATH = "/mnt/leituras"
 DATA_PATH = "/tmp"
-PROCESSED_FILE = "/tmp/processed_files_vendas.txt"
+PROCESSED_FILE = os.path.join(DATA_PATH, "processed_files_vendas.txt")
 SQL_FILE_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../sql/inserindo_vendas_csv.sql"))
 
 default_args = {
@@ -23,7 +22,7 @@ default_args = {
 with DAG(
     "inserindo_vendas_json",
     default_args=default_args,
-    description="Processa arquivos JSON de vendas não processados e insere no banco",
+    description="Processa arquivos JSON de vendas não processados e insere no banco, sem copiar arquivos para /tmp",
     schedule="@daily",
     start_date=datetime(2025, 8, 20),
     catchup=False,
@@ -37,25 +36,20 @@ with DAG(
                 f.write("")
 
     @task
-    def copiar_arquivos_para_tmp():
-        if not os.path.exists(DATA_PATH):
-            os.makedirs(DATA_PATH)
+    def listar_arquivos():
         arquivos = []
         for fname in os.listdir(LOCAL_MOUNTED_PATH):
             if fname.startswith("vendas") and fname.endswith(".json"):
-                src = os.path.join(LOCAL_MOUNTED_PATH, fname)
-                dst = os.path.join(DATA_PATH, fname)
-                shutil.copy2(src, dst)
-                arquivos.append(dst)
+                arquivos.append(os.path.join(LOCAL_MOUNTED_PATH, fname))
         return arquivos
 
     @task
-    def listar_novos_arquivos(copied_files):
-        processed = set()
+    def listar_novos_arquivos(arquivos):
+        processados = set()
         if os.path.isfile(PROCESSED_FILE):
             with open(PROCESSED_FILE, "r") as f:
-                processed = set(line.strip() for line in f if line.strip())
-        novos = [f for f in copied_files if f not in processed]
+                processados = set(line.strip() for line in f if line.strip())
+        novos = [f for f in arquivos if f not in processados]
         return novos
 
     @task
@@ -90,9 +84,9 @@ with DAG(
             f.write(f"{file_path}\n")
 
     criar_arquivo_controle_task = criar_arquivo_controle()
-    arquivos_copiados = copiar_arquivos_para_tmp()
-    arquivos_novos = listar_novos_arquivos(arquivos_copiados)
-    arquivos_novos.set_upstream([criar_arquivo_controle_task, arquivos_copiados])
+    arquivos_listados = listar_arquivos()
+    arquivos_novos = listar_novos_arquivos(arquivos_listados)
+    arquivos_novos.set_upstream([criar_arquivo_controle_task, arquivos_listados])
 
     dados = extrair_transformar.expand(file_path=arquivos_novos)
     dados.set_upstream(arquivos_novos)

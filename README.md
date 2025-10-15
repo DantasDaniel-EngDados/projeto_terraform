@@ -38,9 +38,20 @@ Para iniciar o airflow, na pasta airflow rodar os comandos via powershell do ven
 Para verificar banco de dados
     docker exec -it postgres_local psql -U "Nome_do_usuario" -d "Nome_do_banco_de_dados"
 
-Para copiar o .csv e o .pdf criado no container para dentro da pasta leituraDevolvida:
+Após rodar a DAG vendas_por_mes_multi_pdf, para copiar o .csv e o .pdf criado no container para dentro da pasta leituraDevolvida, mas os arquivos já existem dentro do caminho => ./airflow/tmp_host:
+
     docker cp airflow-airflow-worker-1:/tmp/venda_produtos.csv ..\leituraDevolvida\venda_produtos.csv
-    docker cp airflow-airflow-worker-1:/tmp/produto_valor_total.pdf ..\leituraDevolvida\produto_valor_total.pdf
+
+    $files = docker exec airflow-airflow-worker-1 bash -c "ls /tmp/produto_valor_total_*.pdf"
+    foreach ($file in $files.Split("`n")) {
+        $file = $file.Trim()
+        if ($file -ne "") {
+            docker cp airflow-airflow-worker-1:$file ..\leituraDevolvida
+        }
+    }
+
+    OBS: O pdf é por mês e ano então irá gerar vários arquivos dependendo da quantidade de mês e anos contidos na tabela do SQL.
+
 
 Arquivos a serem criados: #Preencher conforme estabeleceu as informações
     /terraform/terraform.tfvars
@@ -107,4 +118,4 @@ Caso seja preciso estabelecer conexão do airflow com o banco de dados postgres 
             conn_id: tente usar o => postgres_default
             #Não encontrei comandos para verificar isso via CMD que funcionaram
 
-OBS: Indico sempre verificar as informações, comandos e links aqui escritos. Também pode ser que contenha pontos de melhoria, verificar e validar é recomendado. Muitos arquivos são salvos na pasta /tmp no container, eles podem ser perder se o docker for reiniciado.
+OBS: Indico sempre verificar as informações, comandos e links aqui escritos. Também pode ser que contenha pontos de melhoria, verificar e validar é recomendado. Muitos arquivos são salvos na pasta /tmp no container, eles podem ser perder se o docker for reiniciado, tentei fazer com que fique permanente caso queira alterar retirar os volumes "- ./tmp_host:/tmp" do docker-compose.yaml.

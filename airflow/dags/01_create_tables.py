@@ -1,7 +1,7 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def run_init_sql():
     # Caminho relativo ao container Airflow, ajuste se necessário
@@ -26,13 +26,14 @@ default_args = {
 with DAG(
     dag_id='create_postgres_tables',
     default_args=default_args,
-    schedule=None,  # rodar manualmente ou disparar pelo trigger
+    schedule=None,
     tags=['init', 'postgres'],
 ) as dag:
 
     init_tables = PythonOperator(
         task_id='run_init_sql',
         python_callable=run_init_sql,
+        execution_timeout=timedelta(minutes=2)
     )
 
     init_tables

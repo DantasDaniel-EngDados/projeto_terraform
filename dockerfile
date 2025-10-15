@@ -15,6 +15,7 @@ RUN mkdir -p /mnt/leituras && \
     COPY ./sql/group_by.sql /opt/sql
     COPY ./sql/inserindo_produtos_csv.sql /opt/sql
     COPY ./sql/inserindo_vendas_csv.sql /opt/sql
+    COPY ./sql/salvar_resultado_csv_pdf.sql /opt/sql
 
 
 USER airflow
