@@ -118,4 +118,4 @@ Caso seja preciso estabelecer conexão do airflow com o banco de dados postgres 
             conn_id: tente usar o => postgres_default
             #Não encontrei comandos para verificar isso via CMD que funcionaram
 
-OBS: Indico sempre verificar as informações, comandos e links aqui escritos. Também pode ser que contenha pontos de melhoria, verificar e validar é recomendado. Muitos arquivos são salvos na pasta /tmp no container, eles podem ser perder se o docker for reiniciado, tentei fazer com que fique permanente caso queira alterar retirar os volumes "- ./tmp_host:/tmp" do docker-compose.yaml.
+OBS: Indico sempre verificar as informações, comandos e links aqui escritos. Também pode ser que contenha pontos de melhoria, verificar e validar é recomendado. Muitos arquivos são salvos na pasta /tmp no container, eles podem ser perder se o docker for reiniciado, tentei fazer com que fique permanente, caso queira alterar retirar os volumes "- ./tmp_host:/tmp" do docker-compose.yaml.
